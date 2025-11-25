@@ -1,0 +1,216 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Toronto — Covering Problems (Full)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- Leaflet -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <!-- Turf -->
+    <script src="https://unpkg.com/@turf/turf@6.5.0/turf.min.js"></script>
+
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
+
+        #app {
+            display: grid;
+            grid-template-columns: 360px 1fr;
+            height: 100%;
+        }
+
+        #panel {
+            overflow: auto;
+            padding: 12px 14px;
+            border-right: 1px solid #e5e7eb;
+            font: 14px/1.4 system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+            background: #fff;
+        }
+
+        #map {
+            height: 100%;
+        }
+
+        h1 {
+            font-size: 16px;
+            margin: 6px 0 12px;
+        }
+
+        h2 {
+            font-size: 13px;
+            margin: 14px 0 8px;
+            color: #111827;
+        }
+
+        .box {
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 10px;
+            margin-bottom: 10px;
+            background: #fafafa;
+        }
+
+        .row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            margin: 6px 0;
+        }
+
+        label {
+            color: #111827;
+        }
+
+        input[type="number"] {
+            width: 100px;
+        }
+
+        select, input[type="number"], input[type="range"] {
+            padding: 6px 8px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            background: #fff;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #111827;
+            background: #111827;
+            color: #fff;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+            button:disabled {
+                opacity: .6;
+                cursor: not-allowed;
+            }
+
+        .muted {
+            color: #6b7280;
+        }
+
+        .small {
+            font-size: 12px;
+        }
+
+        #status {
+            margin-top: 8px;
+            font-size: 12px;
+            color: #111827;
+        }
+
+        .station-label .label-text {
+            background: #111;
+            color: #fff;
+            padding: 2px 6px;
+            border-radius: 6px;
+            font-size: 11px;
+            box-shadow: 0 1px 3px rgba(0,0,0,.2);
+        }
+
+        .line-swatch {
+            display: inline-block;
+            width: 32px;
+            height: 0;
+            border-top: 3px solid;
+            vertical-align: middle;
+            margin-right: 6px;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <aside id="panel">
+            <h1>Toronto — Covering Problems</h1>
+
+            <div class="box">
+                <h2>Layers</h2>
+                <div class="row">
+                    <label><input id="chk-ebk" type="checkbox" checked> Incidents Raster</label>
+                    <input id="op" type="range" min="0" max="1" step="0.05" value="0.8" title="EBK opacity">
+                </div>
+                <div class="row">
+                    <label><input id="chk-boundary" type="checkbox" checked> City Boundary </label>
+                    <span class="small muted"><span class="line-swatch" style="border-color:#000"></span></span>
+                </div>
+                <div class="row">
+                    <label><input id="chk-serviceareas" type="checkbox"> Service Areas</label>
+                    <span class="small muted"><span class="line-swatch" style="border-color:#777; border-style:dashed"></span> </span>
+                </div>
+                <div class="row">
+                    <label><input id="chk-stations" type="checkbox" checked> Stations ID</label>
+                    <span class="small muted"></span>
+                </div>
+                <div class="small muted"> <code></code></div>
+            </div>
+
+            <div class="box">
+                <h2>Set Cover (buffers)</h2>
+                <div class="row">
+                    <label for="buf-metric">Metric</label>
+                    <select id="buf-metric">
+                        <option value="dist">Distance only</option>
+                        <option value="ebkdist">Incident-weighted distance</option>
+                    </select>
+                </div>
+                <div class="row">
+                    <label for="radius">Base radius (m)</label>
+                    <input id="radius" type="number" value="480" min="50" step="10">
+                </div>
+                <div class="row">
+                    <label for="grid">Demand grid (m)</label>
+                    <input id="grid" type="number" value="400" min="50" step="10">
+                </div>
+                <div class="row">
+                    <label for="buf-lambda">λ (Incident weight)</label>
+                    <input id="buf-lambda" type="number" value="0.6" min="0" max="1" step="0.05">
+                </div>
+                <button id="run">Run Set Cover</button>
+            </div>
+
+            <div class="box">
+                <h2>Territories (Voronoi)</h2>
+                <div class="row">
+                    <label for="vor-metric">Metric</label>
+                    <select id="vor-metric">
+                        <option value="dist">Distance only</option>
+                        <option value="ebkdist">Incident + distance</option>
+                    </select>
+                </div>
+                <div class="row">
+                    <label for="vor-cell">Cell/hex size (m)</label>
+                    <input id="vor-cell" type="number" value="600" min="200" step="50">
+                </div>
+                <div class="row">
+                    <label><input id="vor-ebk" type="checkbox"> Shade by Incidents</label>
+                    <span class="small muted"></span>
+                </div>
+                <div class="row">
+                    <label for="vor-lambda">λ (Incident weight)</label>
+                    <input id="vor-lambda" type="number" value="0.6" min="0" max="1" step="0.05">
+                </div>
+                <button id="run-vor">Build Territories</button>
+            </div>
+
+            <div class="box">
+                <div class="row"><button id="clear" style="background:#fff;color:#111;border-color:#d1d5db">Clear</button></div>
+                <div id="status" class="small">Loading…</div>
+            </div>
+        </aside>
+
+        <div id="map"></div>
+    </div>
+
+    <!-- Your app code -->
+    <script src="./js/map.js"></script>
+</body>
+</html>
