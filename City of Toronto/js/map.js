@@ -18,7 +18,7 @@ const ebk = L.tileLayer(`${DATA_ROOT}Raster_EBK/{z}/{x}/{y}.png`, {
 
 /* ================= Layers ================= */
 const boundary = L.geoJSON(null, { style: { color: '#000', weight: 2, fill: false, fillOpacity: 0 } }).addTo(map);
-const serviceAreas = L.geoJSON(null, { style: { color: '#777', weight: 1.5, dashArray: '6,4', fill: false, fillOpacity: 0 } });
+const serviceAreas = L.geoJSON(null, { style: { color: '#555', weight: 3, dashArray: '6,4', fill: false, fillOpacity: 0 } });
 const stations = L.layerGroup().addTo(map);
 
 const bufferStroke = '#60a5fa', bufferFill = '#bfdbfe';
@@ -183,7 +183,6 @@ function unionMany(fc) {
     return u;
 }
 function buildDemandPoints(spacingMeters) {
-    // Only boundary is used (never serviceAreas)
     const b = boundary.toGeoJSON(); if (!b || !b.features || !b.features.length) return [];
     const poly = unionMany(b); const bb = turf.bbox(poly);
     const grid = turf.pointGrid(bb, spacingMeters / 1000, { units: 'kilometers', mask: poly });
