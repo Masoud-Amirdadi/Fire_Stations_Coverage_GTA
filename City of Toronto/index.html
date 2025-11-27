@@ -14,7 +14,7 @@
 
     <style>
         html, body {
-            height: 100%;
+            height: 100dvh;
             margin: 0;
         }
 
@@ -125,9 +125,50 @@
             vertical-align: middle;
             margin-right: 6px;
         }
+
+        @media (max-width: 900px) {
+            #app {
+                grid-template-columns: 1fr;
+            }
+
+            #panel {
+                position: fixed;
+                inset: 0 0 0 auto;
+                width: min(92vw, 360px);
+                max-width: 92vw;
+                transform: translateX(100%);
+                transition: transform .25s ease;
+                z-index: 1001;
+                box-shadow: -12px 0 24px rgba(0,0,0,.15);
+            }
+
+                #panel.is-open {
+                    transform: translateX(0);
+                }
+
+            #map {
+                height: 100dvh;
+            }
+
+            .drawer-toggle {
+                position: fixed;
+                top: 12px;
+                left: 12px;
+                z-index: 1002;
+                padding: 10px 12px;
+                border-radius: 10px;
+                border: 1px solid #111827;
+                background: #111827;
+                color: #fff;
+                font: 600 14px/1 system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+                box-shadow: 0 2px 8px rgba(0,0,0,.2);
+            }
+        }
     </style>
 </head>
 <body>
+    <button class="drawer-toggle" aria-controls="panel" aria-expanded="false">☰ Layers</button>
+
     <div id="app">
         <aside id="panel">
             <h1>Toronto — Covering Problems</h1>
@@ -212,5 +253,23 @@
 
     <!-- Your app code -->
     <script src="./js/map.js"></script>
+
+    <script>
+        (function () {
+            const btn = document.querySelector('.drawer-toggle');
+            const panel = document.getElementById('panel');
+            if (!btn || !panel) return;
+
+            const toggle = () => {
+                const open = panel.classList.toggle('is-open');
+                btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+            };
+
+            btn.addEventListener('click', toggle);
+            document.getElementById('map')?.addEventListener('click', () => {
+                if (panel.classList.contains('is-open')) toggle();
+            });
+        }());
+    </script>
 </body>
 </html>
