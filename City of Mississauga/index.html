@@ -179,7 +179,7 @@
             <div class="box">
                 <h2>Layers</h2>
                 <div class="row">
-                    <label><input id="chk-ebk" type="checkbox" checked> Incidents Raster</label>
+                    <label><input id="chk-ebk" type="checkbox" checked> Normalized incidents raster</label>
                     <input id="op" type="range" min="0" max="1" step="0.05" value="0.8" title="Raster opacity">
                 </div>
                 <div class="row">
@@ -247,7 +247,8 @@
     </div>
 
     <!-- App -->
-    <script src="./js/app.js"></script>
+    <script src="./js/app.js?v=normalized1"></script>
+<script src="./js/incidents-raster.js?v=normalized1"></script>
 
     <script>
         (function () {
@@ -266,8 +267,8 @@
             });
         }());
     </script>
-<script src="../city-model-ui.js?v=paramedic1"></script>
-<script src="../case-guide.js?v=paramedic1"></script>
-<script src="../map-tools.js?v=paramedic1"></script>
+<script src="../city-model-ui.js?v=merge1"></script>
+<script src="../case-guide.js?v=normalized1"></script>
+<script src="../map-tools.js?v=normalized1"></script>
 </body>
 </html>

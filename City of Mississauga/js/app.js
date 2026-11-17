@@ -25,11 +25,8 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19, attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>'
 }).addTo(map);
 
-// EBK raster tiles (visual + sampling source)
-let EBK_TILE_Z = 14;
-const ebk = L.tileLayer(`${DATA_ROOT}Raster_EBK/{z}/{x}/{y}.png`, {
-    maxZoom: 18, minNativeZoom: 10, maxNativeZoom: 16, opacity: 0.8
-}).addTo(map);
+// Normalized source raster; registered to Web Mercator, with numeric sampling.
+const ebk = L.imageOverlay('./data/incidents-raster.png', [[43.47991255451308,-79.81251008973597],[43.73914932929905,-79.53619395364528]], {opacity:0.8, attribution:'Normalized incident raster'}).addTo(map);
 
 // Boundary (outline, used for computations)
 const boundary = L.geoJSON(null, {

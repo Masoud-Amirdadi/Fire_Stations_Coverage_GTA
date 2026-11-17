@@ -8,7 +8,7 @@
     if (!panel || typeof map === 'undefined') return;
 
     const city = document.title.includes('Mississauga') ? 'Mississauga' : 'Toronto';
-    const fields = ['buf-metric', 'radius', 'grid', 'buf-lambda', 'vor-metric', 'vor-cell', 'vor-lambda'];
+    const fields = ['buf-metric', 'radius', 'grid', 'buf-lambda', 'vor-metric', 'vor-cell', 'vor-lambda', 'merge-buffers'];
     const resultLayers = [coverageUnion, coverageBuffers, selectedStationsLayer, territories, gridLayer];
     const status = document.getElementById('status');
 
@@ -23,7 +23,7 @@
             <div><i class="legend-boundary"></i> City boundary</div>
             <div><i class="legend-coverage"></i> Modeled coverage</div>
             <div><i class="legend-territory"></i> Territory cells</div>
-            ${city === 'Toronto' ? '<div class="raster-legend"><b>Estimated incident count</b><span>2021–2025 · EBK</span><i class="raster-ramp"></i><span id="raster-scale">6,039 — 22,035</span></div>' : ''}`;
+            ${city === 'Toronto' ? '<div class="raster-legend"><b>Estimated incident count</b><span>2021–2025 · EBK</span><i class="raster-ramp"></i><span id="raster-scale">6,039 — 22,035</span></div>' : '<div class="raster-legend"><b>Normalized incident index</b><span>Relative values · not incident counts</span><i class="raster-ramp"></i><span>0 (low) — 0.5 — 1 (high)</span><span>Blank areas: no data</span></div>'}`;
         L.DomEvent.disableClickPropagation(node);
         L.DomEvent.disableScrollPropagation(node);
         return node;
@@ -58,7 +58,7 @@
         }
         for (const id of fields) {
             const input = document.getElementById(id);
-            const value = data.settings[id];
+            const value = id === 'merge-buffers' ? (data.settings[id] ?? false) : data.settings[id];
             if (input.type === 'checkbox') {
                 if (typeof value !== 'boolean') throw new Error(`Invalid setting: ${id}.`);
             } else if (input.tagName === 'SELECT') {
@@ -72,7 +72,7 @@
                 }
             }
         }
-        return data.settings;
+        return {...data.settings, 'merge-buffers': data.settings['merge-buffers'] ?? false};
     }
 
     const box = document.createElement('section');

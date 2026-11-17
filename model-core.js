@@ -66,7 +66,15 @@
                 f.properties = buffers[i].properties;
                 return f;
             }).filter(Boolean);
-            return {...result, coverage:turf.featureCollection(features), selected:turf.featureCollection(result.selected.map(i => turf.point(p.stations[i].coord, {idx:i}))), mode:p.mode};
+            let display = features;
+            if (p.mergeBuffers && features.length > 1) {
+                progress('Merging overlapping buffers…');
+                let combined = features[0];
+                for (let i=1; i<features.length; i++) combined = turf.union(combined, features[i]);
+                combined.properties = {merged:true, station_count:result.selected.length};
+                display = [combined];
+            }
+            return {...result, coverage:turf.featureCollection(display), selected:turf.featureCollection(result.selected.map(i => turf.point(p.stations[i].coord, {idx:i}))), mode:p.mode};
         }
         progress('Assigning territory cells using ground distance…');
         // Keep cells separate: repeated polygon union was the main source of freezes.

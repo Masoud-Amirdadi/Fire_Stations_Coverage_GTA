@@ -1,5 +1,5 @@
 'use strict';
-importScripts('vendor/turf.min.js', 'model-core.js');
+importScripts('vendor/turf.min.js', 'model-core.js?v=merge1');
 self.onmessage = ({data}) => {
     try {
         const result = CityModel.run(data, message => self.postMessage({progress:message}));

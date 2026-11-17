@@ -4,6 +4,10 @@
     const status = document.getElementById('status');
     const buttons = [document.getElementById('run'), document.getElementById('run-vor')];
     const clear = document.getElementById('clear');
+    const mergeLabel = document.createElement('label');
+    mergeLabel.className = 'row';
+    mergeLabel.innerHTML = '<span><input id="merge-buffers" type="checkbox"> Merge overlapping buffers</span>';
+    buttons[0].before(mergeLabel);
     const cancel = document.createElement('button');
     cancel.textContent = 'Cancel calculation'; cancel.hidden = true;
     clear.before(cancel);
@@ -52,20 +56,22 @@
     }
     async function weights(stationList, job) {
         const raw = [];
-        if (window.paramedicRaster) await window.paramedicRaster.ready;
+        const raster = window.incidentRaster || window.paramedicRaster;
+        if (raster) await raster.ready;
         for (let i = 0; i < stationList.length; i++) {
             if (job.cancelled) throw Error('Cancelled');
             const origin = stationList[i].coord;
             const samples = [origin, ...Array.from({length:8}, (_, k) => turf.destination(origin, .6, k*45).geometry.coordinates)];
             const values = await Promise.all(samples.map(async coord => {
-                if (window.paramedicRaster) return window.paramedicRaster.sample(...coord);
+                if (raster) return raster.sample(...coord);
                 const tile = pixelTile(...coord), data = await tileData(tile.key);
                 if (!data) return 0;
                 const offset = (tile.y * 256 + tile.x) * 4;
                 if (data[offset+3] === 0) return 0;
                 return (.2126*data[offset]+.7152*data[offset+1]+.0722*data[offset+2])/255;
             }));
-            raw.push(values.reduce((a,b) => a+b,0)/values.length);
+            const valid = values.filter(Number.isFinite);
+            raw.push(valid.length ? valid.reduce((a,b) => a+b,0)/valid.length : 0);
             if (active === job) say(`Reading raster values: ${i+1}/${stationList.length} stations…`);
         }
         const min = Math.min(...raw), range = Math.max(...raw)-min;
@@ -82,7 +88,7 @@
         }
         const list = stationArray();
         if (!list.length || !boundary.getLayers().length) { say('City data is not ready. Wait for loading, or reload if it failed.'); return; }
-        const params = {mode, boundary:boundary.toGeoJSON(), stations:list,
+        const params = {mode, mergeBuffers:document.getElementById('merge-buffers').checked, boundary:boundary.toGeoJSON(), stations:list,
             spacing:Number(document.getElementById(mode === 'coverage' ? 'grid' : 'vor-cell').value),
             radius:Number(document.getElementById('radius').value), lambda:Number(document.getElementById(`${id}-lambda`).value)};
         const weighted = document.getElementById(`${id}-metric`).value === 'ebkdist';
@@ -94,7 +100,7 @@
         try {
             if (weighted) params.weights = await weights(list, job);
             if (active !== job) return;
-            const worker = new Worker('../model-worker.js'); job.worker = worker;
+            const worker = new Worker('../model-worker.js?v=merge1'); job.worker = worker;
             worker.onerror = event => { event.preventDefault(); if (active === job) { say('The calculation worker failed. Reload the page and retry.'); finish(job); } };
             worker.onmessage = ({data}) => {
                 if (active !== job) return;
@@ -104,7 +110,7 @@
                     const result = data.result;
                     if (mode === 'coverage') {
                         coverageUnion.addData(result.coverage); selectedStationsLayer.addData(result.selected);
-                        say(`Coverage: ${result.selected.features.length} stations; ${(100*result.coveredCount/result.total).toFixed(1)}% of ${result.total} sampled points covered.${weighted?' Raster weighting applied.':''}`);
+                        say(`Coverage: ${result.selected.features.length} stations; ${(100*result.coveredCount/result.total).toFixed(1)}% of ${result.total} sampled points covered.${params.mergeBuffers?' Overlapping buffers merged.':''}${weighted?' Raster weighting applied.':''}`);
                     } else {
                         territories.addData(result.territories);
                         say(`Built ${result.cells} territory cells assigned to ${result.count} stations; ${params.spacing} m hexagon side.${weighted?' Raster weighting applied.':''}`);
