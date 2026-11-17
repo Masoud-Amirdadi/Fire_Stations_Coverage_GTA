@@ -54,3 +54,9 @@
  .home .case strong { grid-column:2; grid-row:5; }
  .sheet-caption { flex-wrap:wrap; }
 }
+
+/* Match the portfolio grid while preserving the existing cream palette. */
+body.home {
+  background-image: linear-gradient(rgba(106,125,146,.075) 1px, transparent 1px), linear-gradient(90deg, rgba(106,125,146,.075) 1px, transparent 1px);
+  background-size: 56px 56px;
+}
