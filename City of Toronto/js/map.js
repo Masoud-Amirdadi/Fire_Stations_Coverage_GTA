@@ -1,8 +1,7 @@
 
 const DATA_ROOT = './data/';
 const FILE_BOUNDARY = 'City_of_Toronto_Boundary_Areas.geojson';
-const FILE_SERVICE = 'Service_Areas.geojson';
-const FILE_STATIONS = 'Fire_Stations.geojson';
+const FILE_STATIONS = 'Paramedic_Stations.geojson';
 
 /* ================= Map & Base ================= */
 const map = L.map('map', { preferCanvas: true }).setView([43.653, -79.383], 11);
@@ -10,15 +9,11 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19, attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>'
 }).addTo(map);
 
-/* ================= EBK raster ================= */
-let EBK_TILE_Z = 14; // clamp to 10..16 on sampling
-const ebk = L.tileLayer(`${DATA_ROOT}Raster_EBK/{z}/{x}/{y}.png`, {
-    maxZoom: 18, minNativeZoom: 10, maxNativeZoom: 16, opacity: 0.8
-}).addTo(map);
+/* ================= Paramedic incident raster ================= */
+const ebk = L.imageOverlay('./data/paramedic-raster.png', [[43.46777336462709,-79.75620376298339],[43.97504658024278,-79.02843856792042]], {opacity:0.8, interactive:false}).addTo(map);
 
 /* ================= Layers ================= */
 const boundary = L.geoJSON(null, { style: { color: '#000', weight: 2, fill: false, fillOpacity: 0 } }).addTo(map);
-const serviceAreas = L.geoJSON(null, { style: { color: '#555', weight: 3, dashArray: '6,4', fill: false, fillOpacity: 0 } });
 const stations = L.layerGroup().addTo(map);
 
 const bufferStroke = '#60a5fa', bufferFill = '#bfdbfe';
@@ -37,7 +32,6 @@ const $op = document.getElementById('op');
 const $chkEbk = document.getElementById('chk-ebk');
 const $chkBoundary = document.getElementById('chk-boundary');
 const $chkStations = document.getElementById('chk-stations');
-const $chkService = document.getElementById('chk-serviceareas');
 
 const $bufMetric = document.getElementById('buf-metric');
 const $radius = document.getElementById('radius');
@@ -47,7 +41,6 @@ const $run = document.getElementById('run');
 
 const $vorMetric = document.getElementById('vor-metric');
 const $vorCell = document.getElementById('vor-cell');
-const $vorEBK = document.getElementById('vor-ebk');
 const $vorLambda = document.getElementById('vor-lambda');
 const $runVor = document.getElementById('run-vor');
 
@@ -66,7 +59,6 @@ $op?.addEventListener('input', e => ebk.setOpacity(parseFloat(e.target.value)));
 $chkEbk?.addEventListener('change', e => { if (e.target.checked) ebk.addTo(map); else map.removeLayer(ebk); });
 $chkBoundary?.addEventListener('change', e => { if (e.target.checked) boundary.addTo(map); else map.removeLayer(boundary); });
 $chkStations?.addEventListener('change', e => { if (e.target.checked) stations.addTo(map); else map.removeLayer(stations); });
-$chkService?.addEventListener('change', e => { if (e.target.checked) serviceAreas.addTo(map); else map.removeLayer(serviceAreas); });
 
 /* ================= Safe loader ================= */
 async function loadJSON(url, label) {
@@ -114,6 +106,7 @@ function addStationsToMap(flatFC) {
         });
 
 
+        dot.bindPopup(() => {const el=document.createElement('div');el.textContent=`${p.NAME || 'Paramedic station'} · ${p.ADDRESS || ''}`;return el;});
         const group = L.layerGroup([dot, label]);
         group.feature = f; 
         stations.addLayer(group);
@@ -140,22 +133,12 @@ function stationArray() {
         boundary.addData(boundaryData);
         try { map.fitBounds(boundary.getBounds(), { padding: [20, 20] }); } catch { }
 
-        try {
-            const serviceData = await loadJSON(`${DATA_ROOT}${FILE_SERVICE}`, 'Service Areas');
-            serviceAreas.clearLayers();
-            serviceAreas.addData(serviceData);
-            if ($chkService?.checked) serviceAreas.addTo(map);
-            console.log(`[LOAD] Service Areas features:`, (serviceData.features || []).length);
-        } catch (e) {
-            console.warn('[WARN] Service Areas failed (visual-only):', e);
-        }
-
         const stationData = await loadJSON(`${DATA_ROOT}${FILE_STATIONS}`, 'Stations');
         stations.clearLayers();
         const flat = flattenStationsFC(stationData);
         addStationsToMap(flat);
 
-        $status.textContent = `Loaded boundary, ${flat.features.length} station points${serviceAreas.getLayers().length ? ', service areas OK.' : ' (toggle to view).'} Ready.`;
+        $status.textContent = `Loaded ${flat.features.length} paramedic stations and posts. Ready.`;
     } catch (err) {
         console.error(err);
         $status.textContent = 'Could not load one or more GeoJSON files. Check file paths and run a local server.';

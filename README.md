@@ -1,11 +1,12 @@
 # Service & Space
 
-An interactive GTA learning atlas connecting GIS, transportation and operations research.
+An interactive healthcare and fire emergency response atlas connecting GIS, transportation and operations research.
 
 **[Open the website](https://masoud-amirdadi.github.io/Fire_Stations_Coverage_GTA/)**
 
 - **Vaughan:** explore incidents, response times and estimated capacity.
-- **Toronto & Mississauga:** experiment with coverage and station territories.
+- **Toronto:** paramedic centres and 2021–2025 incident estimates.
+- **Mississauga:** fire station coverage and territories.
 
 Run locally: `python -m http.server 8000 --bind 127.0.0.1`, then open http://localhost:8000/. GitHub Pages: `main` → `/(root)`.
 

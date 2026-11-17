@@ -8,7 +8,7 @@
     if (!panel || typeof map === 'undefined') return;
 
     const city = document.title.includes('Mississauga') ? 'Mississauga' : 'Toronto';
-    const fields = ['buf-metric', 'radius', 'grid', 'buf-lambda', 'vor-metric', 'vor-cell', 'vor-lambda', 'vor-ebk'];
+    const fields = ['buf-metric', 'radius', 'grid', 'buf-lambda', 'vor-metric', 'vor-cell', 'vor-lambda'];
     const resultLayers = [coverageUnion, coverageBuffers, selectedStationsLayer, territories, gridLayer];
     const status = document.getElementById('status');
 
@@ -18,12 +18,12 @@
         const node = L.DomUtil.create('details', 'city-legend');
         node.open = true;
         node.innerHTML = `<summary>Map legend</summary>
-            <div><i class="legend-dot"></i> Fire station</div>
+            <div><i class="legend-dot"></i> ${city === 'Toronto' ? 'Paramedic centre' : 'Fire station'}</div>
             <div><i class="legend-dot selected"></i> Selected station</div>
             <div><i class="legend-boundary"></i> City boundary</div>
             <div><i class="legend-coverage"></i> Modeled coverage</div>
             <div><i class="legend-territory"></i> Territory cells</div>
-            <small>Territory colors identify stations, not intensity.<br>Raster: background reference; no numeric color scale.</small>`;
+            ${city === 'Toronto' ? '<div class="raster-legend"><b>Estimated incident count</b><span>2021–2025 · EBK</span><i class="raster-ramp"></i><span id="raster-scale">6,039 — 22,035</span></div>' : ''}`;
         L.DomEvent.disableClickPropagation(node);
         L.DomEvent.disableScrollPropagation(node);
         return node;

@@ -28,7 +28,7 @@ assert(weighted.coveredCount<=result.coveredCount);
 assert.equal(weighted.coverage.features[0].properties.radius_m,700);
 for(const [city,boundaryName] of [['City of Toronto','City_of_Toronto_Boundary_Areas.geojson'],['City of Mississauga','City Of Mississauag_Boundary.geojson']]) {
     const boundary = read(`${city}/data/${boundaryName}`);
-    const stations = read(`${city}/data/Fire_Stations.geojson`).features.flatMap(f => (f.geometry.type==='MultiPoint'?f.geometry.coordinates:[f.geometry.coordinates]).map(coord=>({coord})));
+    const stations = read(`${city}/data/${city==='City of Toronto'?'Paramedic_Stations':'Fire_Stations'}.geojson`).features.flatMap(f => (f.geometry.type==='MultiPoint'?f.geometry.coordinates:[f.geometry.coordinates]).map(coord=>({coord})));
     const base = {...params,boundary,stations};
     const start=Date.now();
     const coverage=CityModel.run(base);

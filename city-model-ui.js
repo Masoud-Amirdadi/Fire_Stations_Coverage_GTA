@@ -1,4 +1,4 @@
-/* Shared model lifecycle: validated inputs, cancellable worker, explicit raster gaps. */
+/* Shared model lifecycle: validated inputs, cancellable worker, numeric raster sampling. */
 'use strict';
 (() => {
     const status = document.getElementById('status');
@@ -52,11 +52,13 @@
     }
     async function weights(stationList, job) {
         const raw = [];
+        if (window.paramedicRaster) await window.paramedicRaster.ready;
         for (let i = 0; i < stationList.length; i++) {
             if (job.cancelled) throw Error('Cancelled');
             const origin = stationList[i].coord;
             const samples = [origin, ...Array.from({length:8}, (_, k) => turf.destination(origin, .6, k*45).geometry.coordinates)];
             const values = await Promise.all(samples.map(async coord => {
+                if (window.paramedicRaster) return window.paramedicRaster.sample(...coord);
                 const tile = pixelTile(...coord), data = await tileData(tile.key);
                 if (!data) return 0;
                 const offset = (tile.y * 256 + tile.x) * 4;
@@ -64,7 +66,7 @@
                 return (.2126*data[offset]+.7152*data[offset+1]+.0722*data[offset+2])/255;
             }));
             raw.push(values.reduce((a,b) => a+b,0)/values.length);
-            if (active === job) say(`Reading illustrative brightness samples: ${i+1}/${stationList.length} stations…`);
+            if (active === job) say(`Reading raster values: ${i+1}/${stationList.length} stations…`);
         }
         const min = Math.min(...raw), range = Math.max(...raw)-min;
         if (range < 1e-6) return raw.map(() => 0);
@@ -102,10 +104,10 @@
                     const result = data.result;
                     if (mode === 'coverage') {
                         coverageUnion.addData(result.coverage); selectedStationsLayer.addData(result.selected);
-                        say(`Coverage: ${result.selected.features.length} stations; ${(100*result.coveredCount/result.total).toFixed(1)}% of ${result.total} sampled points covered.${weighted?' Illustrative brightness weighting.':''}`);
+                        say(`Coverage: ${result.selected.features.length} stations; ${(100*result.coveredCount/result.total).toFixed(1)}% of ${result.total} sampled points covered.${weighted?' Raster weighting applied.':''}`);
                     } else {
                         territories.addData(result.territories);
-                        say(`Built ${result.cells} territory cells assigned to ${result.count} stations; ${params.spacing} m hexagon side.${weighted?' Illustrative brightness weighting.':''}`);
+                        say(`Built ${result.cells} territory cells assigned to ${result.count} stations; ${params.spacing} m hexagon side.${weighted?' Raster weighting applied.':''}`);
                     }
                 } catch (error) { clearLayers(); say(`No result: ${error.message}`); }
                 finally { finish(job); }

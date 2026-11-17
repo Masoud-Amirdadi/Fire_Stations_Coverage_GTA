@@ -21,3 +21,5 @@ body{color:#193c32}#panel{background:#f6f7f2!important;padding:20px!important}#p
 .legend-territory { width:22px; height:12px; background:linear-gradient(90deg,#e6a1a1 33%,#a1e6b4 33%,#a1e6b4 66%,#a1b4e6 66%); border:1px solid #777; }
 .city-legend small { display:block; margin-top:7px; font-size:11px; max-width:205px; }
 @media(max-width:650px) { .city-legend { max-width:190px; padding:7px 9px; } }
+
+.raster-legend{margin-top:9px;display:grid!important;gap:4px!important}.raster-legend span{font-size:11px}.raster-ramp{display:block;width:100%;height:10px;background:linear-gradient(90deg,#f8f4de,#73bfab,#197480,#12304c)}
