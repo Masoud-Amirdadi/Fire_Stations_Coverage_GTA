@@ -34,7 +34,7 @@ pages = [Path(p) for p in ["index.html", "explore.html", "Vaughan/index.html",
     "City of Toronto/index.html", "City of Mississauga/index.html"]]
 for page in pages:
     PageLinks(page).feed((ROOT/page).read_text(encoding="utf-8-sig"))
-for asset in [".nojekyll", "Vaughan/LICENSE", "Vaughan/SOURCE-README.md",
+for asset in [".nojekyll", "model-core.js", "model-worker.js", "city-model-ui.js", "vendor/turf.min.js", "vendor/TURF-LICENSE", "Vaughan/LICENSE", "Vaughan/SOURCE-README.md",
     "City of Toronto/data/Fire_Stations.geojson",
     "City of Toronto/data/City_of_Toronto_Boundary_Areas.geojson",
     "City of Toronto/data/Service_Areas.geojson",
