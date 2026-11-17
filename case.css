@@ -9,3 +9,15 @@ body{color:#193c32}#panel{background:#f6f7f2!important;padding:20px!important}#p
 #panel .result-toggle { font-size: 13px; line-height: 1.6; }
 #panel .tool-actions button { font-size: 13px!important; }
 #panel h2 { font-size: 16px; }
+
+.city-legend { background:rgba(255,255,255,.96); color:#193c32; padding:10px 12px; border:1px solid #c6d3c9; border-radius:5px; max-width:230px; font:12px/1.5 "Segoe UI",sans-serif; box-shadow:0 2px 7px #0001; }
+.city-legend summary { font-weight:700; cursor:pointer; }
+.city-legend>div { display:flex; align-items:center; gap:9px; margin-top:5px; }
+.city-legend i { display:inline-block; flex:none; }
+.city-legend .legend-dot { width:12px; height:12px; border:2px solid #000; border-radius:50%; background:white; }
+.city-legend .selected { background:#111; }
+.legend-boundary { width:22px; border-top:2px solid #000; }
+.legend-coverage { width:22px; height:12px; background:#bfdbfe; border:2px solid #60a5fa; }
+.legend-territory { width:22px; height:12px; background:linear-gradient(90deg,#e6a1a1 33%,#a1e6b4 33%,#a1e6b4 66%,#a1b4e6 66%); border:1px solid #777; }
+.city-legend small { display:block; margin-top:7px; font-size:11px; max-width:205px; }
+@media(max-width:650px) { .city-legend { max-width:190px; padding:7px 9px; } }

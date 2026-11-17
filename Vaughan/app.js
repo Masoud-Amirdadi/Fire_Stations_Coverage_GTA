@@ -181,7 +181,6 @@
   }
   function initMap() {
     map=L.map('map',{zoomControl:false,preferCanvas:true,minZoom:9,maxZoom:19,zoomSnap:.25,zoomDelta:.5});
-    map.attributionControl.addAttribution('<a href="https://www.linkedin.com/in/masoud-amirdadi-058742201/" target="_blank" rel="noopener noreferrer">Developed by Masoud Amirdadi</a>');
     map.createPane('incidentPane');map.getPane('incidentPane').style.zIndex=410;
     map.createPane('boundaryPane');map.getPane('boundaryPane').style.zIndex=420;
     map.getPane('boundaryPane').style.pointerEvents='none';

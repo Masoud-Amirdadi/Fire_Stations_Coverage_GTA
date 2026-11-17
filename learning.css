@@ -54,3 +54,15 @@ nav a, .text-link, .case strong, .caption, .graphic-note span,
 .study-guide label, .study-guide textarea { font-size: 14px; line-height: 1.65; }
 .step-nav a, .step-nav .direct-link, .guide-toggle, .study-guide .button { font-size: 13px; }
 @media (max-width: 650px) { .step-nav a { font-size: 13px; } }
+
+/* Compact learning guide: detail and notes are optional. */
+.study-guide { padding:20px; }
+.study-guide h1 { margin-bottom:12px; }
+.study-guide h2 { margin-top:18px; margin-bottom:8px; }
+.study-guide ol { margin:0 0 18px; }
+.study-guide li { padding:4px 0; }
+.study-guide .guide-extra { border-top:1px solid var(--line); padding:12px 0; margin:0; }
+.guide-extra summary { font-size:14px; }
+.guide-extra summary span { font-weight:400; color:var(--muted); }
+.guide-extra label { display:block; margin:12px 0 6px; }
+.study-guide .button { margin-top:14px; }

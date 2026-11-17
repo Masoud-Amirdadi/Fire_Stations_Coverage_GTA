@@ -8,13 +8,28 @@
     if (!panel || typeof map === 'undefined') return;
 
     const city = document.title.includes('Mississauga') ? 'Mississauga' : 'Toronto';
-    const developerUrl = 'https://www.linkedin.com/in/masoud-amirdadi-058742201/';
     const fields = ['buf-metric', 'radius', 'grid', 'buf-lambda', 'vor-metric', 'vor-cell', 'vor-lambda', 'vor-ebk'];
     const resultLayers = [coverageUnion, coverageBuffers, selectedStationsLayer, territories, gridLayer];
     const status = document.getElementById('status');
 
-    map.attributionControl.addAttribution(`<a href="${developerUrl}" target="_blank" rel="noopener">Developed by Masoud Amirdadi</a>`);
     L.control.scale({ imperial: false, position: 'bottomleft' }).addTo(map);
+    const legend = L.control({position:'bottomright'});
+    legend.onAdd = () => {
+        const node = L.DomUtil.create('details', 'city-legend');
+        node.open = true;
+        node.innerHTML = `<summary>Map legend</summary>
+            <div><i class="legend-dot"></i> Fire station</div>
+            <div><i class="legend-dot selected"></i> Selected station</div>
+            <div><i class="legend-boundary"></i> City boundary</div>
+            <div><i class="legend-coverage"></i> Modeled coverage</div>
+            <div><i class="legend-territory"></i> Territory cells</div>
+            <small>Territory colors identify stations, not intensity.<br>Raster: background reference; no numeric color scale.</small>`;
+        L.DomEvent.disableClickPropagation(node);
+        L.DomEvent.disableScrollPropagation(node);
+        return node;
+    };
+    legend.addTo(map);
+
 
     function announce(message) {
         status.textContent = message;
