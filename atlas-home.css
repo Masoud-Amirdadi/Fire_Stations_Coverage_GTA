@@ -60,3 +60,11 @@ body.home {
   background-image: linear-gradient(rgba(106,125,146,.075) 1px, transparent 1px), linear-gradient(90deg, rgba(106,125,146,.075) 1px, transparent 1px);
   background-size: 56px 56px;
 }
+.home .practice-resources { display:grid; grid-template-columns:1fr 1fr; gap:48px; border-top:1px solid var(--line); }
+.practice-resources p { font-size:15px; line-height:1.7; color:var(--muted); }
+.official-resources h3 { font-size:18px; margin:0 0 16px; }
+.official-resources>a { display:block; padding:14px 0; border-top:1px solid var(--line); text-decoration:none; }
+.official-resources>a strong { display:block; font-size:15px; }
+.official-resources>a span { display:block; margin-top:4px; font-size:14px; color:var(--muted); }
+.official-resources>a:hover strong { text-decoration:underline; }
+@media(max-width:650px) { .home .practice-resources { grid-template-columns:1fr; gap:24px; } .home nav { flex-wrap:wrap; } }
