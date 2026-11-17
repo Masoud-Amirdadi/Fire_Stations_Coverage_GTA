@@ -90,7 +90,7 @@
         <p class="model-help">Save settings to repeat a scenario in either city. Loading changes inputs only; run the model to update results. GeoJSON contains the current result geometry, not a validated service plan.</p>
         <input type="file" accept=".json,application/json" id="settings-file" hidden aria-label="Choose model settings file">
     `;
-    panel.querySelector('.model-warning').after(box);
+    panel.append(box);
 
     box.querySelector('[data-action="fit"]').addEventListener('click', () => {
         const bounds = boundary.getBounds();
