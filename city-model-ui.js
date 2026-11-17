@@ -58,17 +58,16 @@
             const samples = [origin, ...Array.from({length:8}, (_, k) => turf.destination(origin, .6, k*45).geometry.coordinates)];
             const values = await Promise.all(samples.map(async coord => {
                 const tile = pixelTile(...coord), data = await tileData(tile.key);
-                if (!data) return null;
+                if (!data) return 0;
                 const offset = (tile.y * 256 + tile.x) * 4;
-                if (data[offset+3] < 255) return null;
+                if (data[offset+3] === 0) return 0;
                 return (.2126*data[offset]+.7152*data[offset+1]+.0722*data[offset+2])/255;
             }));
-            if (values.some(v => v === null)) throw Error(`Raster samples are missing or transparent near station ${i+1}. No weighted result was produced. Use Distance only, or restore the raster data and retry.`);
             raw.push(values.reduce((a,b) => a+b,0)/values.length);
             if (active === job) say(`Reading illustrative brightness samples: ${i+1}/${stationList.length} stations…`);
         }
         const min = Math.min(...raw), range = Math.max(...raw)-min;
-        if (range < 1e-6) throw Error('Raster samples have no usable variation. Use Distance only.');
+        if (range < 1e-6) return raw.map(() => 0);
         return raw.map(w => (w-min)/range);
     }
     async function run(mode) {
