@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="referrer" content="origin">
+  <meta name="description" content="Local Vaughan Fire Services incident, response and idle-capacity atlas for 2023–2025.">
+  <title>Vaughan Fire Services · Station Atlas</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="vendor/leaflet.css"><link rel="stylesheet" href="styles.css">
+  <script defer src="vendor/leaflet.js"></script><script defer src="vendor/chart.umd.js"></script>
+  <script defer src="data.js"></script><script defer src="thresholds.js"></script><script defer src="boundary.js"></script><script defer src="app.js"></script>
+</head>
+<body>
+  <main class="workspace">
+      <header class="map-brand" id="atlas-header"><div class="header-identity"><span class="brand-icon" aria-hidden="true">V</span><div><span class="eyebrow">VAUGHAN FIRE SERVICES</span><h1>Station Atlas</h1><p>Incident demand & operational patterns</p></div><span class="live-tag">2023–2025</span></div>      <nav class="view-tabs" aria-label="Analysis view"><button data-view="overall" class="active" aria-pressed="true">Overall</button><button data-view="station" aria-pressed="false">By station</button><button data-view="year" aria-pressed="false">By year</button></nav></header>
+    <section class="map-area" aria-label="Station and incident map">
+      <div id="map"></div>
+      <div class="layout-switcher" role="group" aria-label="Show or hide dashboard areas">
+        <button id="toggle-header" aria-controls="atlas-header" aria-expanded="true">Hide header</button>
+        <button id="toggle-map-tools" aria-expanded="true">Hide map controls</button>
+        <button id="toggle-panel" aria-controls="analytics-panel" aria-expanded="true">Hide analytics</button>
+      </div>
+
+      <div class="map-tools">
+        <div class="tool-card"><label for="map-metric">Station marker metric</label><select id="map-metric"><option value="incidents">Incidents responded</option><option value="response">Average response time</option><option value="idle">Estimated idle capacity</option></select></div>
+        <button id="fit-map" class="icon-button" title="Show Vaughan and all stations" aria-label="Show Vaughan and all stations">⌖</button>
+      </div>
+      <div class="layer-control"><label class="toggle-label"><input id="show-incidents" type="checkbox" checked><span class="toggle-track"></span><span>Incident activity</span></label><span id="map-count">Loading locations…</span><label for="incident-status" class="sr-only">Incident status on map</label><select id="incident-status"><option value="all">All incidents</option><option value="non-cancelled">With non-cancelled responses</option><option value="cancelled">With cancelled responses</option></select><label class="boundary-toggle"><input id="show-boundary" type="checkbox" checked> Vaughan city boundary</label><small class="map-filter-note">Map filter only · charts retain their stated scope</small></div>
+      <div class="map-bottom"><div class="legend"><span class="legend-station"></span> Fire station <span class="legend-incident"></span> Approximate incident areas <span class="legend-boundary"></span> Vaughan boundary <span class="muted">Circle size reflects count</span></div><div class="map-hint">Select an area for categories and years · Select a station for service insights</div></div>
+      <div id="map-error" class="map-error" hidden></div>
+    </section>
+    <aside id="analytics-panel" class="insight-panel" aria-label="Analysis panel">
+      <div class="panel-top"><div><span class="eyebrow">SERVICE INSIGHTS</span><h2 id="view-title">Analytics</h2></div><button id="about-button" class="quiet-button" aria-label="About these data">About data ↗</button></div>
+
+      <div class="filter-row"><div><label for="station-select">Station</label><select id="station-select"><option value="all">All 10 stations</option></select></div><div><label for="year-select">Reporting year</label><select id="year-select"><option value="all">All three years</option><option value="2023">2023</option><option value="2024">2024</option><option value="2025">2025</option></select></div></div>
+      <div class="panel-scroll" id="panel-scroll">
+        <div class="selection-context"><span class="context-dot"></span><span id="selection-context">All stations · 2023–2025</span></div>
+        <div id="kpis" class="kpi-grid" aria-live="polite"></div>
+        <div id="station-detail" class="station-detail" hidden></div>
+        <section class="chart-card threshold-card" aria-label="Response threshold comparison"><div class="card-heading"><div><h3>Response thresholds</h3><p>Notification to arrival · non-cancelled unit responses</p></div></div><div id="threshold-summary" class="threshold-summary" aria-live="polite"></div><div class="threshold-key"><span><i class="band-four"></i>Within 4 min</span><span><i class="band-six"></i>Over 4 to 6 min</span><span><i class="band-over"></i>Over 6 min</span></div><div class="chart-wrap threshold-chart-wrap"><canvas id="threshold-chart" aria-label="Response time bands by station or year" role="img"></canvas></div><p id="threshold-scope" class="chart-footnote"></p><p class="chart-footnote">Inclusive cutoffs: ≤4 and ≤6 minutes. Recorded zeros included. Comparison thresholds, not a stated service standard. Map incident-status filters do not alter these results.</p></section>
+        <div class="coverage-strip"><div><span class="coverage-dot"></span><b id="coverage-title">Address matching</b><p id="coverage-detail"></p></div><button id="download-unmatched" class="text-button">Summary ↓</button></div>
+        <section class="chart-card"><div class="card-heading"><div><h3 id="share-title">Incident share by year</h3><p id="share-description">Unique incidents across the source data</p></div><span class="chart-label">SHARE</span></div><div class="share-layout"><div class="pie-wrap"><canvas id="share-chart" aria-label="Incident share chart" role="img"></canvas></div><div id="share-legend" class="share-legend"></div></div></section>
+        <section class="chart-card"><div class="card-heading"><div><h3>Response time</h3><p>Non-cancelled unit responses · minutes</p></div><label class="sr-only" for="breakdown-select">Chart time breakdown</label><select id="breakdown-select" class="small-select"><option value="Annual">By year</option><option value="Month">By month</option><option value="Day_night">Day / night</option><option value="Weekday">Weekday</option><option value="Season">Season</option></select></div><div class="chart-wrap"><canvas id="response-chart" aria-label="Average median and 90th percentile response times" role="img"></canvas></div></section>
+        <section class="chart-card"><div class="card-heading"><div><h3>Idle & occupied capacity</h3><p>Estimated unit capacity · percent</p></div><span class="chart-label">UTILIZATION</span></div><div class="chart-wrap"><canvas id="idle-chart" aria-label="Idle and occupied unit capacity" role="img"></canvas></div><p class="chart-footnote">Cancelled responses count as occupied until cancellation.</p></section>
+        <section class="detail-card"><div class="card-heading"><div><h3>Behind the averages</h3><p>Selected stations and reporting period</p></div></div><dl id="detail-metrics" class="detail-metrics"></dl></section>
+        <section class="comparison-card"><div class="card-heading"><div><h3>Station comparison</h3><p>Click a row to locate a station</p></div><button id="download-summary" class="text-button">CSV ↓</button></div><div class="table-scroll"><table><thead><tr><th>Station</th><th>Incidents</th><th>Response</th><th>Idle</th></tr></thead><tbody id="comparison-body"></tbody></table></div></section>
+        <div class="data-note"><b>Read these figures together.</b> Idle capacity estimates use 14 operating units across 10 stations. They describe time without an incident assignment, not staffing availability or time without other duties.</div>
+        <footer class="panel-footer">Audited 2023–2025 data <span>Presentation view · 16 Nov 2026</span></footer>
+      </div>
+    </aside>
+  </main>
+  <dialog id="about-dialog"><button class="dialog-close quiet-button" id="close-about" aria-label="Close data information">✕</button><span class="eyebrow">ABOUT THE ATLAS</span><h2>Know what the map represents</h2><div id="about-content"></div></dialog>
+</body></html>

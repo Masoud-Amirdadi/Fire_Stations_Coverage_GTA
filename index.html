@@ -1,58 +1,8 @@
-﻿<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="utf-8" />
-    <title>Fire Stations Coverage – GTA</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <style>
-        body {
-            font: 16px system-ui,Segoe UI,Roboto,sans-serif;
-            margin: 0;
-            padding: 32px;
-            background: #fafafa;
-            color: #111
-        }
-
-        h1 {
-            margin: 0 0 16px 0
-        }
-
-        .card {
-            background: #fff;
-            border: 1px solid #e5e7eb;
-            border-radius: 12px;
-            padding: 16px;
-            margin: 12px 0;
-            max-width: 640px
-        }
-
-        a {
-            display: inline-block;
-            padding: 10px 14px;
-            border-radius: 10px;
-            border: 1px solid #111827;
-            background: #111827;
-            color: #fff;
-            text-decoration: none
-        }
-
-        code {
-            background: #f3f4f6;
-            padding: 2px 6px;
-            border-radius: 6px
-        }
-    </style>
-</head>
-<body>
-    <h1>Fire Stations Coverage — GTA</h1>
-    <div class="card">
-        <p>Select a city:</p>
-        <p>
-            <a href="./City%20of%20Toronto/">City of Toronto</a>
-            &nbsp;&nbsp;
-            <a href="./City%20of%20Mississauga/">City of Mississauga</a>
-        </p>
-        <p class="muted">Repo root: <code>/Fire_Stations_Coverage_GTA/</code></p>
-    </div>
-</body>
-</html>
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Service & Space — GTA Learning Lab</title><meta name="description" content="Explore how GIS, transportation and operations research connect through three GTA fire service case studies."><link rel="stylesheet" href="learning.css"><script defer src="learning.js"></script></head>
+<body class="home"><a class="skip" href="#main">Skip to content</a><header class="site-header"><a class="brand" href="./"><span class="brand-mark">S↗S</span> SERVICE & SPACE <small>GTA LEARNING LAB</small></a><nav aria-label="Main navigation"><a href="#journey">Case studies</a><a href="#concepts">How it connects</a><a href="#transfer">Transfer the method</a></nav></header>
+<main id="main"><section class="hero"><div><p class="eyebrow">GIS × TRANSPORTATION × OPERATIONS RESEARCH</p><h1>From a point on a map<br>to a better question.</h1><p class="lede">Explore where services are, how demand varies, and what changes when we model coverage. Three GTA case studies. One connected learning journey.</p><a class="button" href="explore.html#vaughan">Start with Vaughan <span>↗</span></a><a class="text-link" href="#journey">Explore the learning path ↓</a><p class="caption">Built for learning, exploration and discussion.</p></div><div class="hero-graphic"><svg viewBox="0 0 480 350" role="img" aria-label="Conceptual service network connecting stations to demand points, not a geographic map"><defs><pattern id="grid" width="32" height="32" patternUnits="userSpaceOnUse"><path d="M32 0H0V32" fill="none" stroke="#cfdbd5" stroke-width="1"/></pattern></defs><rect width="480" height="350" fill="url(#grid)"/><path d="M0 270 Q140 175 260 260 T480 210 V350 H0Z" fill="#c7e0e4"/><g fill="#cfe3d6" stroke="#6c9e83" stroke-dasharray="5 5"><circle cx="135" cy="125" r="88"/><circle cx="320" cy="175" r="100"/></g><g fill="none" stroke="#fff" stroke-width="11"><path d="M0 80L480 185M70 0L180 350M300 0L270 350M0 200L480 90"/></g><g fill="none" stroke="#32745e" stroke-width="3"><path d="M135 125L160 148L260 120L320 175L385 150M135 125L100 80M320 175L300 235"/></g><g fill="#d88b44" stroke="#fff" stroke-width="3"><circle cx="160" cy="148" r="7"/><circle cx="260" cy="120" r="7"/><circle cx="385" cy="150" r="7"/><circle cx="100" cy="80" r="7"/><circle cx="300" cy="235" r="7"/></g><g fill="#174c3c" stroke="#fff" stroke-width="4"><circle cx="135" cy="125" r="14"/><circle cx="320" cy="175" r="14"/></g><g font-family="system-ui" font-size="11" fill="#174c3c"><text x="28" y="28">THE GEOGRAPHY OF A DECISION</text><text x="28" y="324">● Station   ·   Demand   ─ Connection</text></g></svg><div class="graphic-note"><b>Observe → model → compare</b><span>Conceptual illustration · not actual coverage</span></div></div></section>
+<section id="journey"><div class="section-heading"><div><p class="eyebrow">01 / THE LEARNING PATH</p><h2>Start with evidence. Then ask “what if?”</h2></div><p>Move from descriptive analytics to simplified spatial models, then examine what transfers between cities.</p></div><div class="cards"><a class="case" href="explore.html#vaughan"><span class="case-number">01 <span>OBSERVE</span></span><h3>Vaughan</h3><p class="case-sub">Understand the service system</p><p>Explore incidents, response time distributions and estimated occupied capacity across stations and years.</p><div class="tags"><span>Descriptive analytics</span><span>2023–2025</span></div><strong>Open the station atlas ↗</strong></a><a class="case" href="explore.html#toronto"><span class="case-number">02 <span>MODEL</span></span><h3>Toronto</h3><p class="case-sub">Turn geography into a scenario</p><p>Experiment with distance buffers, a sampled demand grid and station territories. See how assumptions change the map.</p><div class="tags"><span>Coverage</span><span>Allocation</span></div><strong>Explore coverage scenarios ↗</strong></a><a class="case" href="explore.html#mississauga"><span class="case-number">03 <span>TRANSFER</span></span><h3>Mississauga</h3><p class="case-sub">Same method, a different context</p><p>Repeat the coverage experiment in another city. Separate reusable methods from local data and assumptions.</p><div class="tags"><span>Comparative reasoning</span></div><strong>Test the transfer ↗</strong></a></div></section>
+<section class="concepts" id="concepts"><div><p class="eyebrow">02 / THREE LENSES, ONE SYSTEM</p><h2>Where? How far?<br>Which decision?</h2><p>GIS organizes the evidence. Transportation explains movement. Operations research structures choices under constraints.</p><dl><dt>GIS · Represent the system</dt><dd>Locate stations and demand, inspect patterns, and define the study boundary.</dd><dt>Transportation · Represent access</dt><dd>Distinguish straight line distance from travel over roads. Speed, connectivity and congestion affect reachable areas.</dd><dt>OR · Compare decisions</dt><dd>Use objectives such as covering demand or assigning territories. Check sensitivity before interpreting a result.</dd></dl></div><div class="mini-lab"><p class="eyebrow">A SMALL EXPERIMENT</p><h3>Reach changes with assumptions.</h3><p>Adjust a hypothetical travel budget. This arithmetic example is separate from the city models.</p><label for="minutes">Travel budget <output id="minute-value">6 min</output></label><input id="minutes" type="range" min="2" max="15" value="6"><label for="speed">Assumed average speed</label><select id="speed"><option value="20">20 km/h</option><option value="30" selected>30 km/h</option><option value="40">40 km/h</option></select><div class="reach-number"><span id="reach">3.0</span><small>km of travel distance</small></div><div class="reach-track"><div id="reach-bar"></div></div><p id="formula" aria-live="polite">30 km/h × 6/60 h = 3.0 km</p><p class="caption">Distance = speed × time. This is not a mapped service radius or total emergency response time; dispatch, turnout and road geometry are excluded.</p></div></section>
+<section id="transfer"><p class="eyebrow">03 / WHAT TRANSFERS?</p><h2>Transfer the workflow, then recalibrate.</h2><div class="table-wrap"><table><thead><tr><th>Stage</th><th>Reusable idea</th><th>What needs local evidence</th></tr></thead><tbody><tr><td>Describe</td><td>Map demand and compare distributions</td><td>Incident definitions, reporting periods, station records</td></tr><tr><td>Represent access</td><td>Build a distance or travel cost relationship</td><td>Road network, speeds, barriers, response time components</td></tr><tr><td>Model</td><td>Coverage and territory assignment</td><td>Demand weights, capacity, thresholds, objective</td></tr><tr><td>Evaluate</td><td>Compare scenarios and sensitivity</td><td>Observed performance, uncertainty and operational constraints</td></tr></tbody></table></div><div class="note"><b>A comparison of methods, not a city ranking.</b> Vaughan describes historical activity. Toronto and Mississauga illustrate simplified spatial scenarios. Their outputs have different meanings and should not be treated as directly comparable performance scores.</div></section>
+<footer><a href="https://www.linkedin.com/in/masoud-amirdadi-058742201/" target="_blank" rel="noopener">Developed by Masoud Amirdadi</a><span>Service & Space · An illustrative GIS + OR learning tool</span><a href="https://github.com/Masoud-Amirdadi/vaughan-station-atlas">Vaughan atlas source ↗</a><a href="https://github.com/Masoud-Amirdadi/Fire_Stations_Coverage_GTA">Coverage source ↗</a></footer></main></body></html>

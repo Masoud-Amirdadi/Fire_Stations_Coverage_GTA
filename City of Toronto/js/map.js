@@ -1,4 +1,4 @@
-﻿
+
 const DATA_ROOT = './data/';
 const FILE_BOUNDARY = 'City_of_Toronto_Boundary_Areas.geojson';
 const FILE_SERVICE = 'Service_Areas.geojson';
@@ -7,7 +7,7 @@ const FILE_STATIONS = 'Fire_Stations.geojson';
 /* ================= Map & Base ================= */
 const map = L.map('map', { preferCanvas: true }).setView([43.653, -79.383], 11);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 19, attribution: '&copy; OpenStreetMap contributors'
+    maxZoom: 19, attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>'
 }).addTo(map);
 
 /* ================= EBK raster ================= */

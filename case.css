@@ -1,0 +1,11 @@
+body{color:#193c32}#panel{background:#f6f7f2!important;padding:20px!important}#panel h1{font-size:23px;letter-spacing:-.8px;color:#193c32;margin:18px 0}#panel h2{color:#28684f;font-size:14px}#panel .box{background:white;border-color:#d9e1d8;padding:14px;border-radius:7px}#panel button{background:#193c32;color:white;border-radius:5px;padding:10px;border:1px solid #193c32;cursor:pointer}#panel button:disabled{opacity:.5;cursor:wait}#panel input,#panel select{border-color:#c6d3c9;accent-color:#28684f}#panel .model-help{font-size:11px;color:#61736b;line-height:1.6}#panel .case-home{color:#28684f;font-size:12px;text-decoration:none}#panel .preset-row{display:flex;gap:6px;flex-wrap:wrap}#panel .preset-row button{font-size:11px;background:#e8eee6;color:#193c32;border-color:#c6d3c9}#panel .model-warning{background:#eeeae0;padding:12px;border-radius:4px;font-size:11px;line-height:1.6}#panel #status{padding:10px;background:#e8eee6;border-radius:4px;line-height:1.6}.drawer-toggle{display:none}@media(max-width:900px){.drawer-toggle{display:block!important;top:12px!important;left:auto!important;right:12px!important}#panel{padding-top:64px!important}#panel .row{flex-wrap:wrap}#panel select{max-width:100%}}:focus-visible{outline:3px solid #c08031;outline-offset:3px}
+
+.tool-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}.tool-actions button{font-size:11px!important}.result-toggle{display:block;margin-top:12px;font-size:12px}.leaflet-control-attribution a{color:#28684f}
+
+/* Keep help and controls legible beside the map. */
+#panel { font-size: 15px; line-height: 1.6; }
+#panel .model-help, #panel .model-warning, #panel .case-home,
+#panel .preset-row button, #panel #status, #panel .small,
+#panel .result-toggle { font-size: 13px; line-height: 1.6; }
+#panel .tool-actions button { font-size: 13px!important; }
+#panel h2 { font-size: 16px; }

@@ -1,4 +1,4 @@
-﻿
+
 
 /* ========= City config ========= */
 const CFG = {
@@ -22,7 +22,7 @@ async function loadFirstExisting(fileNames) {
 /* ========= Base map & layers ========= */
 const map = L.map('map', { preferCanvas: true }).setView(CFG.center, CFG.zoom);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 19, attribution: '&copy; OpenStreetMap contributors'
+    maxZoom: 19, attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>'
 }).addTo(map);
 
 // EBK raster tiles (visual + sampling source)

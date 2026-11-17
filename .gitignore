@@ -1,0 +1,7 @@
+
+# Local rollback copies
+_before_learning_lab/
+__pycache__/
+*.pyc
+.DS_Store
+Thumbs.db
