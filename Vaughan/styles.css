@@ -72,3 +72,11 @@ th{font-size:10px}
 .category-chip{display:inline-block;background:#edf3f6;color:#355d78;padding:2px 8px;border-radius:5px;font-size:11px}
 .incident-popup .privacy-note{font-size:10px;color:#61727c;margin:13px 0 0;padding-top:11px;border-top:1px solid #e3e8e8}
 @media(max-width:760px){.layer-control select{display:block}.layer-control{bottom:65px}.map-area{min-height:460px}.legend{font-size:9px}.map-brand .live-tag{display:inline-block}}
+.truck-select-label{display:block;font-size:11px;color:var(--muted);margin-bottom:5px}.truck-select{width:100%;border:1px solid var(--line);background:#fff;border-radius:6px;padding:8px 10px;font-size:12px;margin-bottom:12px}.truck-table-scroll{max-height:235px;overflow:auto}.truck-table-scroll thead{position:sticky;top:0;background:#fff}.truck-table-scroll th,.truck-table-scroll td{font-size:11px;padding:9px 5px}.truck-table-scroll td button{font-size:11px;font-weight:600;color:var(--blue)}.truck-table-scroll tr.selected{background:#edf3ef}.truck-task-title{font-size:13px;margin-top:18px}.truck-task-chart{height:245px}.truck-task-details{font-size:11px;margin-top:10px}.truck-task-details summary{cursor:pointer;color:var(--blue)}.truck-task-details .detail-metrics{margin-top:10px;max-height:230px;overflow:auto}.truck-task-details dt{max-width:75%}.truck-deployment-summary p{padding:8px 0;margin:0;border-bottom:1px solid var(--line);font-size:11px}.truck-deployment-summary span,.truck-deployment-summary small{display:block;color:var(--muted);margin-top:4px;line-height:1.5}#truck-deployment-card[hidden]{display:none}
+
+@media(min-width:761px){html,body{height:100%;overflow:hidden}}
+
+@media(min-width:761px){.workspace{position:fixed;inset:0}}
+#truck-view-content[hidden]{display:none}.panel-scroll.trucks-active>:not(.selection-context):not(#truck-view-content){display:none!important}.map-brand .view-tabs button{white-space:nowrap}
+
+.truck-table-scroll th{white-space:normal;line-height:1.35;vertical-align:bottom}

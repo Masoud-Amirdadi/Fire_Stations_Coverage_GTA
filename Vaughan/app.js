@@ -41,14 +41,17 @@
     render({locate:view==='station'});
   }
   function selectStation(id, locate=true) {
-    state.station=String(id);state.view='station';render({locate});
+    state.station=String(id);if(state.view!=='trucks')state.view='station';render({locate});
   }
   function updateControls() {
     $('station-select').value=state.station;$('year-select').value=state.year;
     document.querySelectorAll('[data-view]').forEach(b => {const on=b.dataset.view===state.view;b.classList.toggle('active',on);b.setAttribute('aria-pressed',String(on));});
     const station=selectedStation();
+    const trucksView=state.view==='trucks';
+    $('truck-view-content').hidden=!trucksView;
+    $('panel-scroll').classList.toggle('trucks-active',trucksView);
     $('breakdown-select').querySelector('option[value="Annual"]').textContent=state.station==='all'&&state.year!=='all'?'By station':state.year!=='all'?'Selected year':'By year';
-    $('view-title').textContent=station?`Station ${station.label}`:state.year!=='all'?`${state.year} in focus`:'Analytics';
+    $('view-title').textContent=state.view==='trucks'?'Trucks':station?`Station ${station.label}`:state.year!=='all'?`${state.year} in focus`:'Analytics';
     $('selection-context').textContent=`${station?`Station ${station.label}`:'All 10 stations'} · ${yearLabel(state.year)}`;
   }
   function updateMetrics() {
@@ -83,7 +86,7 @@
       labels=['2023','2024','2025'];values=labels.map(y=>D.rawIncidentTotals[y]);
       colors=palette.map((c,i)=>state.year==='all'||labels[i]===state.year?c:c+'55');
       $('share-title').textContent='Incident share by year';
-      $('share-description').textContent=state.year==='all'?'All unique source incidents · three year total':`${state.year} highlighted within the three year total`;
+      $('share-description').textContent=state.year==='all'?'All unique source incidents · three-year total':`${state.year} highlighted within the three-year total`;
     }
     const total=values.reduce((a,b)=>a+b,0);
     drawChart('share-chart','doughnut',{labels,datasets:[{data:values,backgroundColor:colors,borderColor:'#ffffff',borderWidth:3,hoverOffset:3}]},{cutout:'66%',plugins:{tooltip:{callbacks:{label:ctx=>`${ctx.label}: ${num(ctx.raw)} (${pct(ctx.raw/total)})`}}}});
@@ -122,7 +125,7 @@
   }
   function stationPopup(st) {
     const s=annual(String(st.id),state.year);
-    return `<div class="popup-eyebrow">VAUGHAN FIRE SERVICES</div><div class="popup-title">Station ${st.label}</div><div class="popup-address">${esc(st.address)}</div><div class="popup-metrics"><div class="popup-metric"><small>Incidents responded</small><b>${num(s.incidents)}</b></div><div class="popup-metric"><small>Estimated operating units</small><b>${st.units}</b></div><div class="popup-metric"><small>Average response</small><b>${fixed(s.avg)} <em>min</em></b></div><div class="popup-metric"><small>Average occupied</small><b>${fixed(s.occupied)} <em>min</em></b></div></div><div class="popup-idle">Estimated idle capacity <b>${pct(s.idle_pct)}</b><div class="popup-track"><i style="width:${s.idle_pct*100}%"></i></div></div><div class="popup-scope">${yearLabel(state.year)} · Non-cancelled response statistics<br>Cancelled assignments are included in occupancy.</div>`;
+    return `<div class="popup-eyebrow">VAUGHAN FIRE SERVICES</div><div class="popup-title">Station ${st.label}</div><div class="popup-address">${esc(st.address)}</div><div class="popup-metrics"><div class="popup-metric"><small>Incidents responded</small><b>${num(s.incidents)}</b></div><div class="popup-metric"><small>Estimated operating units</small><b>${st.units}</b></div><div class="popup-metric"><small>Average response</small><b>${fixed(s.avg)} <em>min</em></b></div><div class="popup-metric"><small>Average occupied</small><b>${fixed(s.occupied)} <em>min</em></b></div></div><div class="popup-idle">Estimated idle capacity <b>${pct(s.idle_pct)}</b><div class="popup-track"><i style="width:${s.idle_pct*100}%"></i></div></div><div class="popup-scope">${yearLabel(state.year)} · Non-cancelled response statistics<br>Cancelled assignments are included in occupancy.<br><b>Recorded trucks:</b> ${window.VFRS_TRUCKS?.records.filter(r=>r.station===st.id&&r.year===state.year).map(r=>esc(r.truck)).join(", ")||"None in selected year"}</div>`;
   }
   function updateStationMarkers(locate=false) {
     map.stop();
@@ -150,12 +153,12 @@
   }
   function incidentPopup(group) {
     const rows=categoryRows(group.incidents);
-    return `<div class="incident-popup"><span class="popup-eyebrow">AREA SUMMARY</span><h4>Incident activity</h4><div class="incident-total"><strong>${num(group.incidents.length)}</strong><span>incidents in this selection</span></div><p class="area-note">Approximate 500 metre area · ${yearLabel(state.year)}</p><table class="category-table"><caption class="sr-only">Incidents by year and broad category</caption><thead><tr><th>Year</th><th>Category</th><th>Count</th></tr></thead><tbody>${rows.map(([year,category,count])=>`<tr><td>${esc(year)}</td><td><span class="category-chip">${esc(category)}</span></td><td>${num(count)}</td></tr>`).join('')}</tbody></table><p class="privacy-note">Locations are generalized. Individual incident details are not displayed.</p></div>`;
+    return `<div class="incident-popup"><span class="popup-eyebrow">AREA SUMMARY</span><h4>Incident activity</h4><div class="incident-total"><strong>${num(group.incidents.length)}</strong><span>incidents in this selection</span></div><p class="area-note">Approximate 500-metre area · ${yearLabel(state.year)}</p><table class="category-table"><caption class="sr-only">Incidents by year and broad category</caption><thead><tr><th>Year</th><th>Category</th><th>Count</th></tr></thead><tbody>${rows.map(([year,category,count])=>`<tr><td>${esc(year)}</td><td><span class="category-chip">${esc(category)}</span></td><td>${num(count)}</td></tr>`).join('')}</tbody></table><p class="privacy-note">Locations are generalized. Individual incident details are not displayed.</p></div>`;
   }
   function updateIncidents() {
     currentIncidents=filterIncidents();const located=currentIncidents.filter(isLocated);const missing=currentIncidents.length-located.length;
     $('coverage-title').textContent=`${pct(currentIncidents.length?located.length/currentIncidents.length:0)} of selected incidents located`;
-    $('coverage-detail').textContent=`${num(located.length)} matched · ${num(missing)} unmatched or incomplete. Shown in approximate 500 metre areas.`;
+    $('coverage-detail').textContent=`${num(located.length)} matched · ${num(missing)} unmatched or incomplete. Shown in approximate 500-metre areas.`;
     $('map-count').textContent=`${num(located.length)} located / ${num(currentIncidents.length)} selected incidents`;
     incidentLayer.clearLayers();
     if(!state.showIncidents)return;
@@ -170,7 +173,7 @@
   }
   function render({locate=false}={}) {
     $('panel-scroll').scrollTop=0;
-    updateControls();updateMetrics();updateShare();updateTimeCharts();updateThresholds();updateComparison();updateStationMarkers(locate);
+    updateControls();updateMetrics();if(state.view==='trucks')window.VFRS_TRUCK_UI?.render(state);updateShare();updateTimeCharts();updateThresholds();updateComparison();updateStationMarkers(locate);
     const token=++renderToken;
     requestAnimationFrame(()=>{if(token===renderToken)updateIncidents();});
   }
@@ -220,8 +223,8 @@
   function fitMap(){map.fitBounds(boundaryLayer?boundaryLayer.getBounds():L.latLngBounds(D.stations.map(s=>[s.lat,s.lng])),{paddingTopLeft:[45,75],paddingBottomRight:[45,90],maxZoom:12});}
   D.stations.forEach(st=>$('station-select').insertAdjacentHTML('beforeend',`<option value="${st.id}">Station ${st.label}</option>`));
   document.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>setView(b.dataset.view)));
-  $('station-select').addEventListener('change',e=>{state.station=e.target.value;state.view=state.station==='all'?(state.year==='all'?'overall':'year'):'station';render({locate:state.station!=='all'});});
-  $('year-select').addEventListener('change',e=>{state.year=e.target.value;state.view=state.station==='all'?(state.year==='all'?'overall':'year'):'station';render();});
+  $('station-select').addEventListener('change',e=>{state.station=e.target.value;if(state.view!=='trucks')state.view=state.station==='all'?(state.year==='all'?'overall':'year'):'station';render({locate:state.station!=='all'});});
+  $('year-select').addEventListener('change',e=>{state.year=e.target.value;if(state.view!=='trucks')state.view=state.station==='all'?(state.year==='all'?'overall':'year'):'station';render();});
   $('breakdown-select').addEventListener('change',e=>{state.breakdown=e.target.value;updateTimeCharts();});
   $('map-metric').addEventListener('change',e=>{state.mapMetric=e.target.value;updateStationMarkers();});
   $('show-incidents').addEventListener('change',e=>{state.showIncidents=e.target.checked;updateIncidents();});
@@ -239,7 +242,7 @@
   $('comparison-body').addEventListener('click',e=>{const row=e.target.closest('[data-station]');if(row)selectStation(row.dataset.station);});
   $('download-summary').addEventListener('click',()=>downloadCsv(`VFRS_station_comparison_${state.year}.csv`,['Period','Station','Estimated units','Incidents non-cancelled','Unit responses non-cancelled','Cancelled unit responses','Average response minutes','Average occupied minutes','Estimated idle percent'],D.stations.map(st=>{const s=annual(String(st.id));return[yearLabel(state.year),st.label,st.units,s.incidents,s.responses,s.cancelled,s.avg,s.occupied,s.idle_pct*100];})));
   $('download-unmatched').addEventListener('click',()=>downloadCsv(`VFRS_unlocated_summary_${state.station}_${state.year}.csv`,['Year','Category','Incident count'],categoryRows(currentIncidents.filter(i=>!isLocated(i)))));
-  $('about-content').innerHTML=`<p><b>Incident counts.</b> Overall totals include all ${num(D.incidents.length)} unique source incidents. Station response metrics exclude cancelled responses and vehicles without a station mapping. Station incident counts overlap when multiple stations attend.</p><p><b>Occupied and idle.</b> Non-cancelled responses are occupied from notification to clear time; cancelled responses from notification to cancellation. Overlapping assignments for the same unit are merged. Capacity is estimated at two units for Stations 1, 2, 3 and 5 and one for all other stations. Activity above that estimate is flagged and idle capacity is capped at zero.</p><p><b>Time and reporting.</b> Aggregate statistics are calculated from source alarm dates and times; these are not included in the incident layer. Occupancy hours follow the inferred actual intervals. Daytime is 07:00–19:00. Seasons are winter Dec–Feb, spring Mar–May, summer Jun–Aug and autumn Sep–Nov. Times crossing midnight assume the next day; time-only fields cannot establish multi-day event duration.</p><p><b>Presentation privacy.</b> Incident locations are grouped into approximate 500 metre grid areas. Popups and unlocated downloads show broad categories and reporting years only. Incident IDs, street addresses, exact dates and times, detailed descriptions, unit identifiers and individual response durations are excluded from the distributed incident data. These generalized summaries reduce detail; they are not a guarantee of anonymity.</p><p><b>Incident locations.</b> Addresses were matched locally to <a href="${esc(D.sources.addresses.replace('/query',''))}" target="_blank" rel="noopener">official York Region address points</a> downloaded ${esc(D.sources.addressReferenceDate)}. No incident addresses were submitted to a geocoding service. Multiple matching reference points are accepted only within 50 metres; otherwise locations remain unmatched. Current address points may differ from historical incident locations.</p><p><b>Map filters.</b> The incident-status selector filters map points and matching coverage only. Charts and KPIs retain their stated non-cancelled and occupied-capacity definitions. Unmapped incidents remain in overall incident totals and the incident map, but not station metrics.</p><p><b>Station locations.</b> Coordinates were supplied by the user. Unit-code assignment indicates nominal station affiliation, not confirmed dispatch location. Estimated idle capacity does not account for training, inspections or maintenance. Basemap tiles are the only live map requests.</p>`;
+  $('about-content').innerHTML=`<p><b>Incident counts.</b> Overall totals include all ${num(D.incidents.length)} unique source incidents. Station response metrics exclude cancelled responses and vehicles without a station mapping. Station incident counts overlap when multiple stations attend.</p><p><b>Occupied and idle.</b> Non-cancelled responses are occupied from notification to clear time; cancelled responses from notification to cancellation. Overlapping assignments for the same unit are merged. Capacity is estimated at two units for Stations 1, 2, 3 and 5 and one for all other stations. Activity above that estimate is flagged and idle capacity is capped at zero.</p><p><b>Time and reporting.</b> Aggregate statistics are calculated from source alarm dates and times; these are not included in the incident layer. Occupancy hours follow the inferred actual intervals. Daytime is 07:00–19:00. Seasons are winter Dec–Feb, spring Mar–May, summer Jun–Aug and autumn Sep–Nov. Times crossing midnight assume the next day; time-only fields cannot establish multi-day event duration.</p><p><b>Presentation privacy.</b> Incident locations are grouped into approximate 500-metre grid areas. Popups and unlocated downloads show broad categories and reporting years only. Incident IDs, street addresses, exact dates and times, detailed descriptions, unit identifiers and individual response durations are excluded from the distributed incident data. These generalized summaries reduce detail; they are not a guarantee of anonymity.</p><p><b>Incident locations.</b> Addresses were matched locally to <a href="${esc(D.sources.addresses.replace('/query',''))}" target="_blank" rel="noopener">official York Region address points</a> downloaded ${esc(D.sources.addressReferenceDate)}. No incident addresses were submitted to a geocoding service. Multiple matching reference points are accepted only within 50 metres; otherwise locations remain unmatched. Current address points may differ from historical incident locations.</p><p><b>Map filters.</b> The incident-status selector filters map points and matching coverage only. Charts and KPIs retain their stated non-cancelled and occupied-capacity definitions. Unmapped incidents remain in overall incident totals and the incident map, but not station metrics.</p><p><b>Station locations.</b> Coordinates were supplied by the user. Unit-code assignment indicates nominal station affiliation, not confirmed dispatch location. Estimated idle capacity does not account for training, inspections or maintenance. Basemap tiles are the only live map requests.</p>`;
   $('about-button').addEventListener('click',()=>$('about-dialog').showModal());
   $('close-about').addEventListener('click',()=>$('about-dialog').close());
   $('about-dialog').addEventListener('click',e=>{if(e.target===$('about-dialog'))$('about-dialog').close();});

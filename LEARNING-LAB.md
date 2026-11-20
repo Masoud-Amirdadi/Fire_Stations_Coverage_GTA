@@ -4,7 +4,7 @@ Run `python -m http.server 8000 --bind 127.0.0.1` from this project and open htt
 
 The overview leads to `explore.html`: Vaughan (observe), Toronto (model), Mississauga (transfer). The city models remain available at their existing paths. Local notes use browser storage and can be downloaded. External basemap tiles and the city Leaflet CDN dependency require internet access.
 
-Vaughan integrates the distributed atlas at commit 50a7ffd357fecc03fd9efdbf5adefc7778188192 from https://github.com/Masoud-Amirdadi/vaughan-station-atlas. Its license, bundled vendor licenses, generalized data and About data panel are retained. No source incident CSVs are imported.
+Vaughan integrates the distributed atlas at commit 56cf0a2353b986d64fe3591b92232edee5974133 from https://github.com/Masoud-Amirdadi/vaughan-station-atlas. The embedded copy includes the Trucks workload and deployment tab. Its license, bundled vendor licenses, generalized data and About data panel are retained. Local integration changes remove the developer attribution and version browser asset URLs. No source incident CSVs are imported.
 
 The shared engine retains a greedy coverage heuristic, with corrected ground distance and explicit missing-data handling. Buffer outputs are not network isochrones or observed response-time predictions. The homepage speed/time experiment is hypothetical and is not an input to the city algorithms. Cross-city comparisons demonstrate method transfer, not performance rankings.
 
